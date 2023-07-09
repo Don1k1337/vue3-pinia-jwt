@@ -1,5 +1,8 @@
 <template>
   <h2 class="text-center">Sign Up</h2>
+  <Message v-if="authStore.errorMsg" severity="warn">
+    {{ authStore.errorMsg }}
+  </Message>
   <form class="flex flex-column gap-3">
     <div class="p-inputgroup flex-1">
       <span class="p-inputgroup-addon">
@@ -13,7 +16,8 @@
       </span>
       <InputText type="password" v-model="password" placeholder="Password" />
     </div>
-    <div class="flex flex-column gap-3">
+    <AppLoader v-if="authStore.loader" />
+    <div v-else class="flex flex-column gap-3">
       <Button class="h-2rem" label="Sign Up" @click="signUp" />
       <span>Are you already registered?</span>
     </div>
@@ -22,14 +26,15 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useAuthStore } from '@/stores/user/auth.module'
+import { authStore } from '@/stores'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-
-const authStore = useAuthStore()
+import Message from 'primevue/message'
+import AppLoader from "@/components/AppLoader.vue"
 
 const email = ref('')
 const password = ref('')
+
 const signUp = async () => {
   await authStore.signUp({ email: email.value, password: password.value })
 }
