@@ -6,8 +6,8 @@ import 'primeflex/primeflex.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { firebaseConfig } from '@/config/firebaseConfig'
 import { initializeApp } from 'firebase/app'
+import { firebaseConfig } from '@/config/firebaseConfig'
 import PrimeVue from 'primevue/config'
 
 import App from './App.vue'

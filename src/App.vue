@@ -1,18 +1,17 @@
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div class="container">
+    <RouterView />
+  </div>
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 </script>
 
-<style scoped></style>
+<style scoped>
+.container {
+  margin: 4rem auto;
+  font-family: Arial, sans-serif;
+  max-width: 700px;
+}
+</style>
