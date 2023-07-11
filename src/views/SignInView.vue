@@ -1,5 +1,5 @@
 <template>
-  <h2 class="text-center">Sign Up</h2>
+  <h2 class="text-center">Sign In</h2>
   <Message v-if="authStore.errMsg" severity="warn">
     {{ authStore.errMsg }}
   </Message>
@@ -18,8 +18,8 @@
     </div>
     <AppLoader v-if="authStore.loader" />
     <div v-else class="flex flex-column gap-3">
-      <Button class="h-2rem" label="Sign Up" @click="signUp" />
-      <span>Are you already registered? <router-link to="/signin">Sign In</router-link></span>
+      <Button class="h-2rem" label="Sign in" @click="signIn" />
+      <span>You are not registered yet? <router-link to="/signup">Sign Up</router-link></span>
     </div>
   </form>
 </template>
@@ -35,7 +35,7 @@ import AppLoader from '@/components/AppLoader.vue'
 const email = ref('')
 const password = ref('')
 
-const signUp = async () => {
-  await authStore.signUp({ email: email.value, password: password.value })
+const signIn = async () => {
+  await authStore.signIn({ email: email.value, password: password.value })
 }
 </script>

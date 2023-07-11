@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { firebaseConfig } from '@/config/firebaseConfig'
-import axiosInstance from '@/axios/axiosInstance'
+import { handleAuthRequest } from '@/use/authUtils'
 
 export const useAuthStore = defineStore('auth', () => {
   const userInfo = ref({
@@ -12,47 +12,51 @@ export const useAuthStore = defineStore('auth', () => {
     expiresIn: ''
   })
 
-  const errorMsg = ref('')
+  const errMsg = ref('')
   const loader = ref(false)
 
   const signUp = async (payload) => {
-    loader.value = true
-    errorMsg.value = ''
+    const url = `:signUp?key=${firebaseConfig.apiKey}`
+    const errorMsgMappings = {
+      EMAIL_EXISTS: 'Sorry, this email is already in use. Please choose another one.',
+      OPERATION_NOT_ALLOWED: 'Password sign-in is disabled for this app.',
+      TOO_MANY_ATTEMPTS_TRY_LATER:
+        'All requests from this device have been blocked due to unusual activity. Please try again later.'
+    }
 
-    try {
-      const url = `:signUp?key=${firebaseConfig.apiKey}`
-      let response = await axiosInstance.post(url, {
-        ...payload,
-        returnSecureToken: true
-      })
-      userInfo.value = {
-        token: response.data.idToken,
-        email: response.data.email,
-        userId: response.data.localId,
-        refreshToken: response.data.refreshToken,
-        expiresIn: response.data.expiresIn
-      }
-      loader.value = false
-      console.log(response)
-    } catch (e) {
-      switch (e.response.data.error.message) {
-        case 'EMAIL_EXISTS':
-          errorMsg.value = 'Sorry, this email is already in use. Please, choose another one.'
-          break
-        case 'OPERATION_NOT_ALLOWED':
-          errorMsg.value = 'Password sign-in is disabled for this app.'
-          break
-        case 'TOO_MANY_ATTEMPTS_TRY_LATER':
-          errorMsg.value =
-            'All requests from this device has been blocked due to unusual activity. Please, try again later.'
-          break
-        default:
-          errorMsg.value = 'Unusual error caused. Please, try again later.'
-          break
-      }
-      loader.value = false
+    const { success, userInfo, errorMessage } = await handleAuthRequest(
+      payload,
+      url,
+      errorMsgMappings
+    )
+
+    if (success) {
+      userInfo.value = userInfo
+    } else {
+      errMsg.value = errorMessage
     }
   }
 
-  return { signUp, userInfo, errorMsg, loader }
+  const signIn = async (payload) => {
+    const url = `:signInWithPassword?key=${firebaseConfig.apiKey}`
+    const errorMsgMappings = {
+      EMAIL_NOT_FOUND: 'Sorry, the provided email was not found in the database.',
+      INVALID_PASSWORD: 'The provided password is incorrect.',
+      USER_DISABLED: 'Unfortunately, the user account has been disabled by an administrator.'
+    }
+
+    const { success, userInfo, errorMessage } = await handleAuthRequest(
+      payload,
+      url,
+      errorMsgMappings
+    )
+
+    if (success) {
+      userInfo.value = userInfo
+    } else {
+      errMsg.value = errorMessage
+    }
+  }
+
+  return { signUp, signIn, userInfo, errMsg, loader }
 })
