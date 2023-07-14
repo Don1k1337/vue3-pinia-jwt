@@ -31,11 +31,14 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import AppLoader from '@/components/AppLoader.vue'
+import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
+const router = useRouter()
 
 const signIn = async () => {
   await authStore.signIn({ email: email.value, password: password.value })
+  await router.push('/dashboard')
 }
 </script>
