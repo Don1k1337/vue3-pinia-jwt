@@ -39,6 +39,6 @@ const router = useRouter()
 
 const signIn = async () => {
   await authStore.signIn({ email: email.value, password: password.value })
-  await router.push('/dashboard')
+  router.push('/dashboard')
 }
 </script>

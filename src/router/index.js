@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import HomeView from '@/views/HomeView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import SignInView from '@/views/SignInView.vue'
@@ -29,5 +30,33 @@ const router = createRouter({
     }
   ]
 })
+
+let authStateChecked = false;
+
+router.beforeEach(async (to, from, next) => {
+    if (!authStateChecked) {
+        const auth = getAuth();
+        try {
+            await new Promise((resolve) => {
+                onAuthStateChanged(auth, (user) => {
+                    authStateChecked = true;
+                    resolve(user);
+                });
+            });
+
+            const user = auth.currentUser;
+            if (to.path !== '/signin' && !user) {
+                next('/signin');
+            } else {
+                next();
+            }
+        } catch (error) {
+            console.error('Error checking authentication state:', error);
+            next('/signin');
+        }
+    } else {
+        next();
+    }
+});
 
 export default router
