@@ -1,7 +1,50 @@
 <template>
-  <div>
-    <h1>Dashboard</h1>
+  <div class="dashboard">
+    <h2>Dashboard</h2>
+    <div class="dashboard__loader" v-if="showLoader">
+      <AppLoader class="mx-auto" />
+    </div>
+    <div class="flex flex-column gap-3" v-else>
+      <Card v-for="note in notes" :key="note.id">
+        <template #title> {{ note.title }} </template>
+        <template #content> {{ note.content }} </template>
+      </Card>
+    </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, onMounted } from 'vue'
+// import { authStore } from '@/stores'
+import AppLoader from '@/components/AppLoader.vue'
+import Card from 'primevue/card'
+import apiDataInstance from '@/api/data/apiDataInstance'
+
+const notes = ref()
+const showLoader = ref(false)
+
+const getAllNotes = async () => {
+  try {
+    showLoader.value = true
+    const response = await apiDataInstance.get(`/notes.json`)
+    notes.value = response.data
+  } catch (e) {
+    console.log(e.response)
+  } finally {
+    showLoader.value = false
+  }
+}
+
+onMounted(async () => {
+  await getAllNotes()
+})
+</script>
+
+<style scoped>
+.dashboard__loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+</style>

@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
       EMAIL_EXISTS: 'Sorry, this email is already in use. Please choose another one.',
       OPERATION_NOT_ALLOWED: 'Password sign-in is disabled for this app.',
       TOO_MANY_ATTEMPTS_TRY_LATER:
-          'All requests from this device have been blocked due to unusual activity. Please try again later.'
+        'All requests from this device have been blocked due to unusual activity. Please try again later.'
     },
     signIn: {
       EMAIL_NOT_FOUND: 'Sorry, the provided email was not found in the database.',
@@ -33,11 +33,11 @@ export const useAuthStore = defineStore('auth', () => {
     loader.value = true
     const url = `:signUp?key=${firebaseConfig.apiKey}`
 
-    const { success, userInfo: signedUpUserInfo, errorMessage } = await handleAuthRequest(
-        payload,
-        url,
-        errorMappings.signUp
-    )
+    const {
+      success,
+      userInfo: signedUpUserInfo,
+      errorMessage
+    } = await handleAuthRequest(payload, url, errorMappings.signUp)
 
     loader.value = false
     if (success) {
@@ -51,11 +51,11 @@ export const useAuthStore = defineStore('auth', () => {
     loader.value = true
     const url = `:signInWithPassword?key=${firebaseConfig.apiKey}`
 
-    const { success, userInfo: signedInUserInfo, errorMessage } = await handleAuthRequest(
-        payload,
-        url,
-        errorMappings.signIn
-    )
+    const {
+      success,
+      userInfo: signedInUserInfo,
+      errorMessage
+    } = await handleAuthRequest(payload, url, errorMappings.signIn)
     loader.value = false
 
     if (success) {

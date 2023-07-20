@@ -13,5 +13,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: import.meta.env.VITE_APP_URL
+  base: '/vue3-pinia-jwt/'
 })

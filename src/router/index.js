@@ -31,32 +31,32 @@ const router = createRouter({
   ]
 })
 
-let authStateChecked = false;
+let authStateChecked = false
 
 router.beforeEach(async (to, from, next) => {
-    if (!authStateChecked) {
-        const auth = getAuth();
-        try {
-            await new Promise((resolve) => {
-                onAuthStateChanged(auth, (user) => {
-                    authStateChecked = true;
-                    resolve(user);
-                });
-            });
+  if (!authStateChecked) {
+    const auth = getAuth()
+    try {
+      await new Promise((resolve) => {
+        onAuthStateChanged(auth, (user) => {
+          authStateChecked = true
+          resolve(user)
+        })
+      })
 
-            const user = auth.currentUser;
-            if (to.path !== '/signin' && !user) {
-                next('/signin');
-            } else {
-                next();
-            }
-        } catch (error) {
-            console.error('Error checking authentication state:', error);
-            next('/signin');
-        }
-    } else {
-        next();
+      const user = auth.currentUser
+      if (to.path !== '/signin' && !user) {
+        next('/signin')
+      } else {
+        next()
+      }
+    } catch (error) {
+      console.error('Error checking authentication state:', error)
+      next('/signin')
     }
-});
+  } else {
+    next()
+  }
+})
 
 export default router
