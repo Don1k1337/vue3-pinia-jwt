@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import HomeView from '@/views/HomeView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import SignInView from '@/views/SignInView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import { authStore } from '@/stores'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_APP_URL),
@@ -16,44 +16,38 @@ const router = createRouter({
     {
       path: '/signup',
       name: 'signup',
-      component: SignUpView
+      component: SignUpView,
+      meta: {
+        auth: false
+      }
     },
     {
       path: '/signin',
       name: 'signin',
-      component: SignInView
+      component: SignInView,
+      meta: {
+        auth: false
+      }
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: DashboardView
+      component: DashboardView,
+      meta: {
+        auth: true
+      }
     }
   ]
 })
 
-let authStateChecked = false
+router.beforeEach((to, from, next) => {
+  const isAuthRequired = to.meta.auth
+  const isUserLoggedIn = !!authStore.userInfo.token
 
-router.beforeEach(async (to, from, next) => {
-  if (!authStateChecked) {
-    const auth = getAuth()
-    try {
-      await new Promise((resolve) => {
-        onAuthStateChanged(auth, (user) => {
-          authStateChecked = true
-          resolve(user)
-        })
-      })
-
-      const user = auth.currentUser
-      if (to.path !== '/signin' && !user) {
-        next('/signin')
-      } else {
-        next()
-      }
-    } catch (error) {
-      console.error('Error checking authentication state:', error)
-      next('/signin')
-    }
+  if (isAuthRequired && !isUserLoggedIn) {
+    next('/signin')
+  } else if (!isAuthRequired && isUserLoggedIn) {
+    next('/dashboard')
   } else {
     next()
   }

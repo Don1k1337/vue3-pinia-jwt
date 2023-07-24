@@ -56,10 +56,17 @@ export const useAuthStore = defineStore('auth', () => {
       userInfo: signedInUserInfo,
       errorMessage
     } = await handleAuthRequest(payload, url, errorMappings.signIn)
-    loader.value = false
 
     if (success) {
       userInfo.value = signedInUserInfo
+      localStorage.setItem(
+        'userTokens',
+        JSON.stringify({
+          token: userInfo.value.token,
+          refreshToken: userInfo.value.refreshToken,
+          expiresIn: userInfo.value.expiresIn
+        })
+      )
     } else {
       errMsg.value = errorMessage
       throw errMsg.value
