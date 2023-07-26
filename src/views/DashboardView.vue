@@ -15,10 +15,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-// import { authStore } from '@/stores'
 import AppLoader from '@/components/AppLoader.vue'
 import Card from 'primevue/card'
-import apiDataInstance from '@/api/data/apiDataInstance'
+import apiAxiosInstance from '@/api/common/apiAxiosInstance'
 
 const notes = ref()
 const showLoader = ref(false)
@@ -26,7 +25,7 @@ const showLoader = ref(false)
 const getAllNotes = async () => {
   try {
     showLoader.value = true
-    const response = await apiDataInstance.get(`/notes.json`)
+    const response = await apiAxiosInstance.get(`${import.meta.env.VITE_DB_URL}/notes.json`)
     notes.value = response.data
   } catch (e) {
     console.log(e.response)

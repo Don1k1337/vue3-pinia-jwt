@@ -2,6 +2,7 @@
   <div class="navbar">
     <RouterLink class="navbar__link" to="/">Home</RouterLink>
     <RouterLink class="navbar__link" to="/signin" v-if="!token">SignIn</RouterLink>
+    <RouterLink class="navbar__link" to="/" v-if="token" @click.prevent="logout">Logout</RouterLink>
     <RouterLink class="navbar__link" to="/dashboard" v-if="token">Dashboard</RouterLink>
   </div>
   <div class="container">
@@ -13,6 +14,7 @@
 import { computed } from 'vue'
 import { RouterView } from 'vue-router'
 import { authStore } from '@/stores'
+import router from '@/router'
 
 const token = computed(() => authStore.userInfo.token)
 
@@ -22,10 +24,13 @@ const checkUser = () => {
   if (userTokens) {
     authStore.userInfo.token = userTokens.token
     authStore.userInfo.refreshToken = userTokens.refreshToken
-    authStore.userInfo.expiresIn = userTokens.expiresIn
   }
+}
 
-  console.log(authStore.userInfo)
+const logout = () => {
+  authStore.logout()
+  localStorage.removeItem('userTokens')
+  router.push('/')
 }
 
 checkUser()

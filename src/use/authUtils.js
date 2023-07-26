@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import apiAuthInstance from '@/api/auth/apiAuthInstance'
+import apiAxiosInstance from '@/api/common/apiAxiosInstance'
 
 export const handleAuthRequest = async (payload, url, errorMessageMappings) => {
   const errorMsg = ref('')
@@ -7,7 +7,7 @@ export const handleAuthRequest = async (payload, url, errorMessageMappings) => {
   try {
     errorMsg.value = ''
 
-    const response = await apiAuthInstance.post(url, {
+    const response = await apiAxiosInstance.post(url, {
       ...payload,
       returnSecureToken: true
     })
@@ -16,8 +16,7 @@ export const handleAuthRequest = async (payload, url, errorMessageMappings) => {
       token: response.data.idToken,
       email: response.data.email,
       userId: response.data.localId,
-      refreshToken: response.data.refreshToken,
-      expiresIn: response.data.expiresIn
+      refreshToken: response.data.refreshToken
     }
 
     console.log(response)

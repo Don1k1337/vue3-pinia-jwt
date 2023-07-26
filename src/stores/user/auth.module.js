@@ -8,8 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
     token: '',
     email: '',
     userId: '',
-    refreshToken: '',
-    expiresIn: ''
+    refreshToken: ''
   })
 
   const errMsg = ref('')
@@ -63,8 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
         'userTokens',
         JSON.stringify({
           token: userInfo.value.token,
-          refreshToken: userInfo.value.refreshToken,
-          expiresIn: userInfo.value.expiresIn
+          refreshToken: userInfo.value.refreshToken
         })
       )
     } else {
@@ -73,5 +71,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { signUp, signIn, userInfo, errMsg, loader }
+  const logout = async () => {
+    userInfo.value = {
+      token: '',
+      email: '',
+      userId: '',
+      refreshToken: ''
+    }
+  }
+
+  return { signUp, signIn, logout, userInfo, errMsg, loader }
 })
